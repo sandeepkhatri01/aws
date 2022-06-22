@@ -1,6 +1,12 @@
 package com.example.myapp;
 
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
@@ -14,10 +20,20 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 public class App {
 
-	public static void main(String[] args) throws IOException {
+	private static final Logger logger = LoggerFactory.getLogger(App.class);
+	private static final String AWS_ACCESS_KEY="AWS_ACCESS_KEY_ID";
+	private static final String AWS_SECRET_KEY="AWS_SECRET_KEY_ID";
 
-		Region region = Region.US_WEST_2;
-		S3Client s3 = S3Client.builder().region(region).build();
+
+	public static void main(String[] args) throws IOException {
+		String accessKey = System.getenv(AWS_ACCESS_KEY);
+		String secretKey = System.getenv(AWS_SECRET_KEY);
+
+		AwsSessionCredentials sessionCredentials = AwsSessionCredentials.create(accessKey, secretKey, "");
+
+
+		Region region = Region.US_EAST_1;
+		S3Client s3 = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(sessionCredentials)).region(region).build();
 
 		String bucket = "bucket" + System.currentTimeMillis();
 		String key = "key";
@@ -44,8 +60,6 @@ public class App {
 		try {
 			s3Client.createBucket(
 					CreateBucketRequest.builder().bucket(bucketName)
-							.createBucketConfiguration(
-									CreateBucketConfiguration.builder().locationConstraint(region.id()).build())
 							.build());
 			System.out.println("Creating bucket: " + bucketName);
 			s3Client.waiter().waitUntilBucketExists(HeadBucketRequest.builder().bucket(bucketName).build());
@@ -67,7 +81,7 @@ public class App {
 			System.out.println(keyName + " has been deleted.");
 			System.out.println("Deleting bucket: " + bucketName);
 			DeleteBucketRequest deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName).build();
-			s3Client.deleteBucket(deleteBucketRequest);
+			//s3Client.deleteBucket(deleteBucketRequest);
 			System.out.println(bucketName + " has been deleted.");
 			System.out.printf("%n");
 		} catch (S3Exception e) {

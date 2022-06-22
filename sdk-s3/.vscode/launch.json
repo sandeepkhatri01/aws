@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch App",
+            "request": "launch",
+            "mainClass": "com.example.myapp.App",
+            "projectName": "sdk-s3",
+            "env": {
+                "AWS_ACCESS_KEY_ID":"AKIAYUANPQLYIQJS5ROU",
+                "AWS_SECRET_KEY_ID":"7IwYYEQ5o7kPnxUsQ09SnK5vJTOLCSyNtkwHA0Tq"
+            }
+        }
+    ]
+}
